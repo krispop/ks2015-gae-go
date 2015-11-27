@@ -49,7 +49,7 @@ type Message struct {
 	Content string
 }
 
-const kind = "Message"
+const kind = "message"
 
 func root(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
