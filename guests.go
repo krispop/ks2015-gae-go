@@ -49,11 +49,13 @@ type Message struct {
 	Content string
 }
 
+const kind = "Message"
+
 func root(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var msgs []*Message
-	if _, err := datastore.NewQuery("message").GetAll(c, &msgs); err != nil {
+	if _, err := datastore.NewQuery(kind).GetAll(c, &msgs); err != nil {
 		fmt.Fprint(w, "DB Error :(")
 		c.Errorf("db error: %v", err)
 		return
@@ -74,13 +76,13 @@ func root(w http.ResponseWriter, r *http.Request) {
 func sign(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	msg := r.FormValue("message")
+	msg := r.FormValue(kind)
 	if msg == "" {
 		fmt.Fprint(w, "もう少し面白いのを入力してみよう！")
 		return
 	}
 
-	if _, err := datastore.Put(c, datastore.NewIncompleteKey(c, "message", nil), &Message{
+	if _, err := datastore.Put(c, datastore.NewIncompleteKey(c, kind, nil), &Message{
 		Time:    time.Now(),
 		Content: msg,
 	}); err != nil {
